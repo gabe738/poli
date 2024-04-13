@@ -31,6 +31,10 @@ const sanitize = data => {
 app.get("/signUp", (req, res) => {
     const username = sanitize(req.body.username);
     const password = sanitize(req.body.password);
+    const email = sanitize(req.body.email);
+    const phoneNumber = sanitize(req.body.phoneNumber);
+    const city = sanitize(req.body.city);
+
 
     if (!username || !password) {
         res.sendStatus(400); // bad request
@@ -51,7 +55,9 @@ app.get("/signUp", (req, res) => {
         username: username,
         username_lower: username,
         password_hash: passHash,
-        city: "Mordor"
+        email: email,
+        phoneNumber: phoneNumber,
+        city: city
     })
 })
 
