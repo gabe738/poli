@@ -1,37 +1,103 @@
 const express = require("express");
 const mongo = require("mongodb");
+const timeManager = require("./timeManager.js");
 const app = express();
 
-const newPost = (contentIn) => async () => {
+const sanitize = data => {
+    return escape(data.replaceAll(/(<|>|\/|"|'|`|\\)/g, "")).trim(); // improve fr
+}
+
+app.get("/newPost", (req, res) => {
+    const authorIdIn = req.body.authorId;
+    const contentIn = sanitize(req.body.content);
+    const isComment = req.body.isComment;
+
     const client = new mongo.MongoClient(process.env.uri);
 
-    await client.connect();
+    client.connect();
 
     const db = client.db("town");   
     const posts = db.collection("posts");
+    const users = db.collection("users");
 
-    await posts.insertOne({
-        content: contentIn
+    const author = users.findOne({_id: authorIdIn});
+
+    posts.insertOne({
+        authorId: authorIdIn,
+        content: contentIn,
+        time: timeManager.getTime(),
+        city: author.city,
+        isComment: isCommentIn
     });
-};
 
-const reviewPosts = async () => {
+    client.close();
+});
+
+app.get("/retrievePosts", (req, res) => {
+    
     const client = new mongo.MongoClient(process.env.uri);
 
-    await client.connect();
+    client.connect();
 
     const db = client.db("town");
 
     const posts = db.collection("posts");
 
-    const poop = await posts.find().toArray();
+    const allPosts = posts.find().toArray();
+    
+    client.close();
 
-    console.log(poop);
-};
+    if (allPosts.length <= req.body.page * 5 || allPosts.length <= 5) return allPosts.slice(0).slice(-5);
+    else {
+        const returnPosts = [];
+        for (let i = (req.body.page * 5) - 5; i < req.body.page * 5; i++) {
+            returnPosts.push(allPosts[i]);
+        }
+        return returnPosts;
+    }
 
-newPost("test");
+});
 
-reviewPosts();
+app.get("/deletePost", (req, res) => {
+    const postId = req.body.postId;
+
+    const client = new mongo.MongoClient(process.env.uri);
+
+    client.connect();
+
+    const db = client.db("town");
+
+    const posts = db.collection("posts");
+
+    posts.deleteOne({_id: postId});
+
+    client.close();
+});
+
+app.get("/editPost", (req, res) => {
+    
+    const postId = req.body.postId;
+    const newContent = req.body.newContent;
+
+    const client = new mongo.MongoClient(process.env.uri);
+
+    client.connect();
+
+    const db = client.db("town");   
+    const posts = db.collection("posts");
+    const users = db.collection("users");
+
+    const author = users.findOne({_id: authorIdIn});
+
+    posts.updateOne({_id: postId}, { $set: {
+        content: newContent,
+        edited: true,
+        editTime: timeManager.getTime()
+    }});
+
+    client.close();
+
+});
 
 const PORT = process.env.PORT || 6969;
 
