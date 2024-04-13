@@ -4,20 +4,13 @@ const crypto = require("crypto");
 const path = require("path");
 const app = express();
 
-// (async () => {
-//     const client = new mongo.MongoClient(process.env.uri);
 
-//     const db = client.db("town");   
+const client = new mongo.MongoClient(process.env.uri);
 
-//     const users = db.collection("users");
+const db = client.db("town");   
 
-//     // name, username, email, password (hashed), phone number, dob
-//     const user = await users.findOne({
-//         username: "gay"
-//     })
-
-//     console.log(user);
-// })()
+const users = db.collection("users");
+const posts = db.collection("posts");
 
 const PORT = process.env.PORT || 6969;
 
@@ -57,7 +50,7 @@ app.post("/signup", (req, res) => {
 
     const passHash = crypto.createHash("sha256");
     passHash.update(password);
-    
+
     const foundUser = users.findOne({ username_lower: username.toLowerCase() })
     
     if (foundUser) {
@@ -72,6 +65,8 @@ app.post("/signup", (req, res) => {
         email: email,
         phone: phoneNumber
     })
+
+    console.log("user created:", username);
 })
 
 app.post("/login", (req, res) => {
