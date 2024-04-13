@@ -47,13 +47,13 @@ app.get("/retrievePosts", (req, res) => {
     
     client.close();
 
-    if (allPosts.length <= req.body.page * 5 || allPosts.length <= 5) return allPosts.slice(0).slice(-5);
+    if (allPosts.length <= req.body.page * 5 || allPosts.length <= 5) res.json(allPosts.slice(0).slice(-5));
     else {
         const returnPosts = [];
         for (let i = (req.body.page * 5) - 5; i < req.body.page * 5; i++) {
             returnPosts.push(allPosts[i]);
         }
-        return returnPosts;
+        res.json(returnPosts);
     }
 
 });
