@@ -54,6 +54,36 @@ const deletePost = async (postId) => {
     client.close();
 }
 
+const editPost = async (postId, newContent) => {
+    
+    const client = new mongo.MongoClient(process.env.uri);
+
+    await client.connect();
+
+    const db = client.db("town");   
+    const posts = db.collection("posts");
+    const users = db.collection("users");
+
+    const author = await users.findOne({_id: authorIdIn});
+
+    // await posts.insertOne({
+    //     authorId: authorIdIn,
+    //     content: contentIn,
+    //     time: timeManager.getTime(),
+    //     city: author.city,
+    //     isComment: isCommentIn
+    // });
+
+    await posts.updateOne({_id: postId}, { $set: {
+            content: newContent,
+            edited: true,
+            editTime: timeManager.getTime()
+        }});
+
+    client.close();
+
+}
+
 // const temp = async (postId) => {
 //     const client = new mongo.MongoClient(process.env.uri);
 
