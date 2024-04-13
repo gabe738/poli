@@ -14,6 +14,7 @@ const posts = db.collection("posts");
 
 const PORT = process.env.PORT || 6969;
 
+app.set("view engine", "ejs");
 app.use(express.json());
 
 const sanitize = data => {
@@ -57,16 +58,21 @@ app.post("/signup", async (req, res) => {
         return;
     }
 
+    const userCookie = crypto.randomUUID();
+
     users.insertOne({
         name: name,
         username: username,
         username_lower: username.toLowerCase(),
         password_hash: passHash.digest("hex"),
         email: email,
-        phone: phoneNumber
+        phone: phoneNumber,
+        cookie: userCookie
     })
 
-    res.send(200).status(`user successfully created: ${username}`);
+    res.status(200).json({
+        cookie: userCookie
+    });
 
     console.log("user created:", username);
 })

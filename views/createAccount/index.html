@@ -146,11 +146,20 @@
             }
         })
         .then(async response => {
-            const messageEl = document.querySelector("#message");
-            const responseText = await response.text();
+            if (!response.ok) {
+                const messageEl = document.querySelector("#message");
+                const responseText = await response.text();
+    
+                messageEl.style.display = "block";
+                messageEl.innerText = responseText;
+            } else {
+                console.log(response)
+                const { cookie } = await response.json();
 
-            messageEl.style.display = "block";
-            messageEl.innerText = responseText;
+
+                localStorage.cookie = cookie;
+                console.log(cookie);
+            }
         })
     });
 </script>
