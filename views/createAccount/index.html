@@ -13,12 +13,12 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
-            background-color: #f0f0f0;
+            
         }
 
         .container {
             width: 500px;
-            height: 450px;
+            height: max-content;
             background: rgba( 255, 255, 255, 0.4 );
             box-shadow: 0 8px 32px 0 rgba( 31, 38, 135, 0.37 );
             backdrop-filter: blur( 7.5px );
@@ -82,12 +82,25 @@
             background-color: #0056b3;
         }
 
+        #message {
+            width: max-content;
+            text-align: center;
+            font-family: monospace;
+            color: #f00;
+            margin-bottom: 10px;
+            background: #eee;
+            border: 1px solid #000f;
+            border-radius: 3px;
+            margin: 10px auto;
+            padding: 2px;
+            display: none;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h2>Create Account</h2>
-        <form id="signup-form" action="/signup" method="POST">
+        <form id="signup-form">
             <div class="form-group">
                 <label for="name">Name:</label>
                 <input type="text" id="name" name="name" placeholder="John Smith" required>
@@ -114,37 +127,31 @@
             </div>
             <button type="submit">Create Account</button>
         </form>
+        <p id="message"></p>
     </div>
 </body>
 
 
-<script>
+<script defer>
     document.getElementById("signup-form").addEventListener("submit", function(event) {
         event.preventDefault(); // prevent the default form submission behavior
         
         const formData = new FormData(this); // get form data
         
-        fetch('/signUp', {
+        fetch('/signup', {
             method: 'POST',
             body: JSON.stringify(Object.fromEntries(formData)),
             headers: {
                 'Content-Type': 'application/json'
             }
         })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
+        .then(async response => {
+            const messageEl = document.querySelector("#message");
+            const responseText = await response.text();
+
+            messageEl.style.display = "block";
+            messageEl.innerText = responseText;
         })
-        .then(data => {
-            // handle successful response
-            console.log(data);
-        })
-        .catch(error => {
-            // handle error
-            console.error('There was a problem with the fetch operation:', error);
-        });
     });
 </script>
 

@@ -29,8 +29,6 @@ app.get("/signup", (req, res) => {
 })
 
 app.post("/signup", async (req, res) => {
-    console.log(req.body)
-
     const name = sanitize(req.body.name);
     const username = sanitize(req.body.username);
     const password = sanitize(req.body.password);
@@ -44,12 +42,10 @@ app.post("/signup", async (req, res) => {
     }
 
     if (password != confirmed_password) {
-        res.sendStatus(400);
+        res.status(400).send("uh oh. youre so skibidi, on toilet!!!!!");
         return;
     }
 
-
-    console.log("HASING")
 
     const passHash = crypto.createHash("sha256");
     passHash.update(password);
@@ -57,7 +53,7 @@ app.post("/signup", async (req, res) => {
     const foundUser = await users.findOne({ username_lower: username.toLowerCase() })
     
     if (foundUser) {
-        res.sendStatus(400); // bad request
+        res.status(400).send("uh ohh.. A SKbidi user with that name ALREADY EXISTS. on toilet bro..a"); // bad request
         return;
     }
 
@@ -69,6 +65,8 @@ app.post("/signup", async (req, res) => {
         email: email,
         phone: phoneNumber
     })
+
+    res.send(200).status(`user successfully created: ${username}`);
 
     console.log("user created:", username);
 })
