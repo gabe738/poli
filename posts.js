@@ -35,8 +35,8 @@ app.get("/newPost", (req, res) => { // authorId, titleIn, content, isComment
     client.close();
 });
 
-app.post("/retrieveAllPosts", (req, res) => {
-    
+app.post("/retrieveAllPosts", (req, res) => { // requests: page
+
     const client = new mongo.MongoClient(process.env.uri);
 
     client.connect();
