@@ -29,6 +29,10 @@ app.get("/signup", (req, res) => {
     res.sendFile(path.join(__dirname, "./views/createAccount/index.html"));
 })
 
+app.get("/login", (req, res) => {
+    res.sendFile(path.join(__dirname, "./views/login/login.html"));
+})
+
 app.post("/signup", async (req, res) => {
     const name = sanitize(req.body.name);
     const username = sanitize(req.body.username);

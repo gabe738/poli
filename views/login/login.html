@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>town</title>
+    <style>
+    @import url('https://fonts.googleapis.com/css2?family=Roboto');
+
+        * {
+            font-family: "Roboto";
+            user-select: none;
+            
+        }
+        
+        html, body {
+            width: 100%;
+            height: 100%;
+        
+            margin: 0;
+            padding: 0;
+        
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: linear-gradient(
+                25deg,
+                hsl(269.07, 100%, 19.02%) 0%,
+                hsl(269.4, 99.47%, 18.83%) 8.1%,
+                hsl(270.37, 97.92%, 18.29%) 15.5%,
+                hsl(272.07, 95.33%, 17.45%) 22.5%,
+                hsl(274.67, 91.6%, 16.37%) 29%,
+                hsl(278.57, 86.54%, 15.11%) 35.3%,
+                hsl(284.47, 79.86%, 13.71%) 41.2%,
+                hsl(293.85, 71.12%, 12.22%) 47.1%,
+                hsl(308.71, 63.46%, 11.8%) 52.9%,
+                hsl(325.3, 58.56%, 12.27%) 58.8%,
+                hsl(342.36, 54.26%, 12.7%) 64.7%,
+                hsl(359.07, 50.62%, 13.1%) 71%,
+                hsl(11.6, 66.75%, 11.9%) 77.5%,
+                hsl(18.63, 83.02%, 10.89%) 84.5%,
+                hsl(22.34, 95.26%, 10.23%) 91.9%,
+                hsl(23.53, 100%, 10%) 100%
+              );
+        
+            display: grid;
+            place-content: center;
+        }
+        
+        #top-left {
+            width: 300px;
+            height: 200px;
+        
+            position: fixed;
+            left: 10px;
+            top: -30px;
+        
+            width: min-content;
+        }
+        
+        
+        #title {
+            font-size: 54px;
+            color: #fff;
+            font-weight: bolder;
+        }
+        
+        #title {
+            width: max-content;
+        } 
+        
+        #title:hover {
+            cursor: pointer;
+            text-decoration: underline;
+        }
+        
+        #middle {
+            width: 500px;
+            height: 500px;
+        
+            background: #222;
+            border-radius: 15px;
+            border: 2px solid black;
+        
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        
+        }
+        
+        #login {
+            font-size: 54px;
+            color: #fff;
+            font-weight: bolder;
+        }
+        
+        #username {
+            font-size: 30px;
+            color: black;
+            font-weight: bolder;
+            border-width: medium;
+        
+            
+        }
+        
+        #usernameText {
+            font-size: 30px;
+            color: #fff;
+            font-weight: bolder;
+            margin-bottom: 5px;
+        }
+        
+        #password {
+            font-size: 30px;
+            color: black;
+            font-weight: bolder;
+            border-width: medium;
+        }
+        
+        #passwordText {
+            font-size: 30px;
+            color: #fff;
+            font-weight: bolder;
+            margin-bottom: 5px;
+        }
+        </style>
+    <script src="script.js" defer></script>
+    <link rel="stylesheet" href="loginStyle.css">
+</head>
+<body>
+    <div id="top-left">
+        <h1 id="title">poli</h1>
+    </div>
+    <div id="middle">
+        <h2 id="login">Login</h2>
+        <form id="sign-in-form">
+            <h3 id="usernameText">Username</h3>
+            <input type="text" id="username" name="username"><br>
+            <h4 id="passwordText">Password</h4>
+            <input type="password" id="password" name="password"><br>
+        </form>
+    </div>
+
+</body>
+</html>
