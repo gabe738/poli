@@ -3,18 +3,26 @@ const mongo = require("mongodb");
 const timeManager = require("./timeManager.js");
 const app = express();
 
-const newPost = async (authorIdIn, contentIn, isCommentIn) => {
+const sanitize = data => {
+    return escape(data.replaceAll(/(<|>|\/|"|'|`|\\)/g, "")).trim(); // improve fr
+}
+
+app.get("/newPost", (req, res) => {
+    const authorIdIn = req.body.authorId;
+    const contentIn = sanitize(req.body.content);
+    const isComment = req.body.isComment;
+
     const client = new mongo.MongoClient(process.env.uri);
 
-    await client.connect();
+    client.connect();
 
     const db = client.db("town");   
     const posts = db.collection("posts");
     const users = db.collection("users");
 
-    const author = await users.findOne({_id: authorIdIn});
+    const author = users.findOne({_id: authorIdIn});
 
-    await posts.insertOne({
+    posts.insertOne({
         authorId: authorIdIn,
         content: contentIn,
         time: timeManager.getTime(),
@@ -23,39 +31,54 @@ const newPost = async (authorIdIn, contentIn, isCommentIn) => {
     });
 
     client.close();
-};
+});
 
-const retrieveAllPosts = async () => {
-    const client = new mongo.MongoClient(process.env.uri);
-
-    await client.connect();
-
-    const db = client.db("town");
-
-    const posts = db.collection("posts");
-
-    const poop = await posts.find().toArray();
-
-    client.close();
-    return poop;
-};
-
-const deletePost = async (postId) => {
-    const client = new mongo.MongoClient(process.env.uri);
-
-    await client.connect();
-
-    const db = client.db("town");
-
-    const posts = db.collection("posts");
-
-    await posts.deleteOne({_id: postId});
-
-    client.close();
-}
-
-const editPost = async (postId, newContent) => {
+app.get("/retrievePosts", (req, res) => {
     
+    const client = new mongo.MongoClient(process.env.uri);
+
+    client.connect();
+
+    const db = client.db("town");
+
+    const posts = db.collection("posts");
+
+    const allPosts = posts.find().toArray();
+    
+    client.close();
+
+    if (allPosts.length <= req.body.page * 5 || allPosts.length <= 5) return allPosts.slice(0).slice(-5);
+    else {
+        const returnPosts = [];
+        for (let i = (req.body.page * 5) - 5; i < req.body.page * 5; i++) {
+            returnPosts.push(allPosts[i]);
+        }
+        return returnPosts;
+    }
+
+});
+
+app.get("/deletePost", (req, res) => {
+    const postId = req.body.postId;
+
+    const client = new mongo.MongoClient(process.env.uri);
+
+    client.connect();
+
+    const db = client.db("town");
+
+    const posts = db.collection("posts");
+
+    posts.deleteOne({_id: postId});
+
+    client.close();
+});
+
+app.get("/editPost", (req, res) => {
+    
+    const postId = req.body.postId;
+    const newContent = req.body.newContent;
+
     const client = new mongo.MongoClient(process.env.uri);
 
     await client.connect();
@@ -66,42 +89,15 @@ const editPost = async (postId, newContent) => {
 
     const author = await users.findOne({_id: authorIdIn});
 
-    // await posts.insertOne({
-    //     authorId: authorIdIn,
-    //     content: contentIn,
-    //     time: timeManager.getTime(),
-    //     city: author.city,
-    //     isComment: isCommentIn
-    // });
-
     await posts.updateOne({_id: postId}, { $set: {
-            content: newContent,
-            edited: true,
-            editTime: timeManager.getTime()
-        }});
+        content: newContent,
+        edited: true,
+        editTime: timeManager.getTime()
+    }});
 
     client.close();
 
-}
-
-// const temp = async (postId) => {
-//     const client = new mongo.MongoClient(process.env.uri);
-
-//     await client.connect();
-
-//     const db = client.db("town");
-
-//     const posts = db.collection("posts");
-//     const users = db.collection("users");
-
-//     const a = await users.findOne({test: "fart123"});
-
-//     console.log(a.password);
-
-//     client.close();
-// }
-
-// temp();
+});
 
 const PORT = process.env.PORT || 6969;
 
