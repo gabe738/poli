@@ -37,13 +37,12 @@ app.get("/signup", (req, res) => {
 
 app.post("/signup", (req, res) => {
     console.log(req.body)
-    
+
     const username = sanitize(req.body.username);
     const password = sanitize(req.body.password);
     const email = sanitize(req.body.email);
     const phoneNumber = sanitize(req.body.phoneNumber);
     const city = sanitize(req.body.city);
-    const DOB = sanitize(req.body.DOB)
 
     if (!username || !password) {
         res.sendStatus(400); // bad request
