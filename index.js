@@ -28,7 +28,7 @@ app.get("/signup", (req, res) => {
     res.sendFile(path.join(__dirname, "./views/createAccount/index.html"));
 })
 
-app.post("/signup", (req, res) => {
+app.post("/signup", async (req, res) => {
     console.log(req.body)
 
     const name = sanitize(req.body.name);
@@ -48,10 +48,13 @@ app.post("/signup", (req, res) => {
         return;
     }
 
+
+    console.log("HASING")
+
     const passHash = crypto.createHash("sha256");
     passHash.update(password);
 
-    const foundUser = users.findOne({ username_lower: username.toLowerCase() })
+    const foundUser = await users.findOne({ username_lower: username.toLowerCase() })
     
     if (foundUser) {
         res.sendStatus(400); // bad request
@@ -59,9 +62,10 @@ app.post("/signup", (req, res) => {
     }
 
     users.insertOne({
+        name: name,
         username: username,
         username_lower: username.toLowerCase(),
-        password_hash: passHash,
+        password_hash: passHash.digest("hex"),
         email: email,
         phone: phoneNumber
     })
