@@ -1,8 +1,10 @@
+<!--This page was us testing out a way to do tickers, similar to how news outlets do-->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <title>town</title>
-    <link rel="stylesheet" href="style.css">
+    <!-- Style that includes a gradient background and rendering instructions for the tickers - currently not in use -->
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Roboto');
 
@@ -116,12 +118,15 @@
             text-decoration: underline;
         }
 
+
+        /* Our keyframes for the animation, basically says at the start use the translate x, and over time shift to the other side */
+
         @keyframes tick {
             0% {
                 transform: translateX(100%);
             }
             100% {
-                transform: translateX(-50%);
+                transform: translateX(-100%);
             }
         }
 
@@ -135,6 +140,7 @@
     </style>
 </head>
 <body>
+    <!-- The basic title for the website, has been changed on all pages that are running in prod -->
     <div id="top-left">
         <h1 id="title">poli</h1>
         <h2 id="area">ozark, mo</h2>
@@ -144,6 +150,8 @@
         <h3>Local News</h3>
         <div id="articles">
             <div>
+                <!-- List of fake news dealios we could use with the ticker system -->
+
                 <a href="https://google.com">"Alien Invasion Rumors Spread Across Lawrence, Kansas"</a>
                 <a href="https://google.com">"Local Scientist Claims Bigfoot Sighted Near Lawrence"</a>
                 <!-- <a href="https://google.com">"Mayor of Lawrence Caught in Love Triangle Scandal"</a>
