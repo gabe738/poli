@@ -4,41 +4,54 @@ const crypto = require("crypto");
 const path = require("path");
 const app = express();
 
-(async () => {
-    const client = new mongo.MongoClient(process.env.uri);
+// (async () => {
+//     const client = new mongo.MongoClient(process.env.uri);
 
-    const db = client.db("town");   
+//     const db = client.db("town");   
 
-    const users = db.collection("users");
+//     const users = db.collection("users");
 
-    // name, username, email, password (hashed), phone number, dob
-    const user = await users.findOne({
-        username: "gay"
-    })
+//     // name, username, email, password (hashed), phone number, dob
+//     const user = await users.findOne({
+//         username: "gay"
+//     })
 
-    console.log(user);
-})()
+//     console.log(user);
+// })()
 
 const PORT = process.env.PORT || 6969;
 
-app.use(express.static("./public"));
 app.use(express.json());
 
 const sanitize = data => {
     return escape(data.replaceAll(/(<|>|\/|"|'|`|\\)/g, "")).trim(); // improve fr
 }
 
-app.get("/signUp", (req, res) => {
+app.get("/", (req, res) => {
+    res.sendFile(path.join(__dirname, "./views/main/index.html"));
+})
+
+app.get("/signup", (req, res) => {
+    res.sendFile(path.join(__dirname, "./views/createAccount/index.html"));
+})
+
+app.post("/signup", (req, res) => {
+    console.log(req.body)
+
+    const name = sanitize(req.body.name);
     const username = sanitize(req.body.username);
     const password = sanitize(req.body.password);
+    const confirmed_password = sanitize(req.body.confirm_password);
     const email = sanitize(req.body.email);
-    const phoneNumber = sanitize(req.body.phoneNumber);
-    const city = sanitize(req.body.city);
-    const DOB = sanitize(req.body.DOB)
-
+    const phoneNumber = sanitize(req.body.phone);
 
     if (!username || !password) {
         res.sendStatus(400); // bad request
+        return;
+    }
+
+    if (password != confirmed_password) {
+        res.sendStatus(400);
         return;
     }
 
@@ -54,12 +67,10 @@ app.get("/signUp", (req, res) => {
 
     users.insertOne({
         username: username,
-        username_lower: username,
+        username_lower: username.toLowerCase(),
         password_hash: passHash,
         email: email,
-        phoneNumber: phoneNumber,
-        city: city,
-        DOB: DOB
+        phone: phoneNumber
     })
 })
 
