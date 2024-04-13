@@ -38,14 +38,20 @@ app.get("/signup", (req, res) => {
 app.post("/signup", (req, res) => {
     console.log(req.body)
 
+    const name = sanitize(req.body.name);
     const username = sanitize(req.body.username);
     const password = sanitize(req.body.password);
+    const confirmed_password = sanitize(req.body.confirm_password);
     const email = sanitize(req.body.email);
-    const phoneNumber = sanitize(req.body.phoneNumber);
-    const city = sanitize(req.body.city);
+    const phoneNumber = sanitize(req.body.phone);
 
     if (!username || !password) {
         res.sendStatus(400); // bad request
+        return;
+    }
+
+    if (password != confirmed_password) {
+        res.sendStatus(400);
         return;
     }
 
@@ -61,12 +67,10 @@ app.post("/signup", (req, res) => {
 
     users.insertOne({
         username: username,
-        username_lower: username,
+        username_lower: username.toLowerCase(),
         password_hash: passHash,
         email: email,
-        phoneNumber: phoneNumber,
-        city: city,
-        DOB: DOB
+        phone: phoneNumber
     })
 })
 
