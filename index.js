@@ -28,7 +28,29 @@ const sanitize = data => {
 }
 
 app.get("/signUp", (req, res) => {
+    const username = sanitize(req.body.username);
+    const password = sanitize(req.body.password);
 
+    if (!username || !password) {
+        res.sendStatus(400); // bad request
+        return;
+    }
+
+    const passHash = crypto.createHash("sha256");
+    passHash.update(password);
+    
+    const foundUser = users.findOne({ username_lower: username.toLowerCase() })
+    
+    if (foundUser) {
+        res.sendStatus(400); // bad request
+        return;
+    }
+
+    users.insertOne({
+        username: username,
+        username_lower: username,
+        password_hash: passHash
+    })
 })
 
 app.post("/login", (req, res) => {
@@ -36,7 +58,7 @@ app.post("/login", (req, res) => {
     const password = sanitize(req.body.password);
 
     if (!username || !password) {
-        res.sendStatus(401);
+        res.sendStatus(400); // bad request
         return;
     }
 
@@ -46,16 +68,20 @@ app.post("/login", (req, res) => {
     const foundUser = users.findOne({ username_lower: username.toLowerCase() })
     
     if (!foundUser) {
-        res.sendStatus(400);
+        res.sendStatus(400); // bad request
         return;
     }
 
     if (foundUser.password_hash != passHash.digest("hex")) {
-        res.sendStatus(401);
+        res.sendStatus(401); // unauthorized
         return;
     }
 
     // successfully loged in !!! (need ot code)
+})
+
+app.get("*", (req, res) => {
+    res.render("./404.html");
 })
 
 app.listen(PORT, () => console.log(`listening on port ${PORT}`));

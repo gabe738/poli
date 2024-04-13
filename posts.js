@@ -5,17 +5,20 @@ const app = express();
 const newPost = (contentIn) => async () => {
     const client = new mongo.MongoClient(process.env.uri);
 
-    const db = client.db("town");   
+    await client.connect();
 
+    const db = client.db("town");   
     const posts = db.collection("posts");
 
-    posts.insertOne({
+    await posts.insertOne({
         content: contentIn
     });
 };
 
 const reviewPosts = async () => {
     const client = new mongo.MongoClient(process.env.uri);
+
+    await client.connect();
 
     const db = client.db("town");
 
