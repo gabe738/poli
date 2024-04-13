@@ -2,7 +2,7 @@ const express = require("express");
 const mongo = require("mongodb");
 const app = express();
 
-const newPost = (content) => async () => {
+const newPost = (contentIn) => async () => {
     const client = new mongo.MongoClient(process.env.uri);
 
     const db = client.db("town");   
@@ -10,7 +10,7 @@ const newPost = (content) => async () => {
     const posts = db.collection("posts");
 
     posts.insertOne({
-        content: content
+        content: contentIn
     });
 };
 
