@@ -22,11 +22,22 @@ def main():
         reader = csv.reader(infile)
         writer = csv.writer(outfile)
 
+        pastRow = " "
+
         for row in reader:
             value = row[0].split('|')[0].strip()
-            if value not in existing_values:
-                writer.writerow([value])
-                existing_values.add(value)
+            secondValue = row[0].split('|')[2].strip()
+            endValue = value + "," + secondValue
+            endValue2 = ("['" + endValue + "']")
+            if str(endValue2) == str(pastRow):
+                print(endValue2)
+                print(pastRow)
+            else :
+                print(endValue2)
+                print(pastRow)
+                writer.writerow([endValue])
+            pastRow = [endValue]
+
 
 if __name__ == "__main__":
     main()
