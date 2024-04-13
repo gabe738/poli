@@ -1,6 +1,7 @@
 const express = require("express");
 const mongo = require("mongodb");
 const crypto = require("crypto");
+const path = require("path");
 const app = express();
 
 (async () => {
@@ -49,7 +50,8 @@ app.get("/signUp", (req, res) => {
     users.insertOne({
         username: username,
         username_lower: username,
-        password_hash: passHash
+        password_hash: passHash,
+        city: "Mordor"
     })
 })
 
@@ -81,7 +83,7 @@ app.post("/login", (req, res) => {
 })
 
 app.get("*", (req, res) => {
-    res.render("./404.html");
+    res.sendFile(path.join(__dirname, "./404.html"));
 })
 
 app.listen(PORT, () => console.log(`listening on port ${PORT}`));

@@ -2,10 +2,79 @@
 <html lang="en">
 <head>
     <title>404</title>
-    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto');
+
+        * {
+            font-family: "Roboto";
+            user-select: none;
+            color: #fff;
+        }
+
+        body {
+            width: 100vw;
+            height: 100vh;
+
+            padding: 0;
+            margin: 0;
+
+            background: linear-gradient(
+                59deg,
+                hsl(336, 100%, 1.96%) 0%,
+                hsl(337.44, 95.32%, 2.03%) 8.1%,
+                hsl(341.73, 83.68%, 2.22%) 15.7%,
+                hsl(349.09, 69.18%, 2.52%) 22.9%,
+                hsl(0.16, 55.12%, 2.91%) 29.7%,
+                hsl(12.72, 60.53%, 2.99%) 36.1%,
+                hsl(23.69, 66.22%, 3.08%) 42.4%,
+                hsl(32.95, 71.92%, 3.17%) 48.5%,
+                hsl(40.59, 77.42%, 3.26%) 54.5%,
+                hsl(46.81, 82.55%, 3.36%) 60.5%,
+                hsl(51.8, 87.2%, 3.45%) 66.5%,
+                hsl(55.74, 91.26%, 3.53%) 72.7%,
+                hsl(58.78, 94.64%, 3.6%) 79%,
+                hsl(60.98, 97.32%, 3.72%) 85.7%,
+                hsl(62.35, 99.13%, 3.85%) 92.6%,
+                hsl(63, 100%, 3.92%) 100%
+            );
+
+            display: grid;
+            place-content: center;
+        }
+
+        #info {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #error {
+            font-size: 64px;
+            
+            margin: 7px;
+        }
+
+        #spacer {
+            background: #fff;
+            width: 3px;
+            height: 55px;
+        }
+
+        #message {
+            font-size: 24px;
+
+            width: 125px;
+
+            margin: 10px;
+        }
+    </style>
 </head>
 <body>
-    <div id="">
+    <div id="info">
+        <span id="error">404</span>
+        <div id="spacer"></div>
+        <span id="message">page not found 🤔</span>
     </div>
 
 </body>
