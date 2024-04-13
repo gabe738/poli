@@ -32,7 +32,7 @@ def main():
             if str(endValue2) == str(pastRow):
                 print(endValue2)
                 print(pastRow)
-            else :
+            else:
                 print(endValue2)
                 print(pastRow)
                 writer.writerow([endValue])
