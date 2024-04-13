@@ -81,15 +81,15 @@ app.get("/editPost", (req, res) => {
 
     const client = new mongo.MongoClient(process.env.uri);
 
-    await client.connect();
+    client.connect();
 
     const db = client.db("town");   
     const posts = db.collection("posts");
     const users = db.collection("users");
 
-    const author = await users.findOne({_id: authorIdIn});
+    const author = users.findOne({_id: authorIdIn});
 
-    await posts.updateOne({_id: postId}, { $set: {
+    posts.updateOne({_id: postId}, { $set: {
         content: newContent,
         edited: true,
         editTime: timeManager.getTime()
