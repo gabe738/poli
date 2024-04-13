@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Website</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: #333;
+            color: #fff;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .circle-button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 24px;
+            line-height: 50px;
+            display: inline-block;
+            margin-right: 10px;
+            cursor: pointer;
+        }
+
+        .columns {
+            display: flex;
+            justify-content: space-between;
+            padding: 20px;
+            height: 80vh;
+            /* 80% of the viewport height */
+        }
+
+        .column {
+            flex: 1;
+            margin: 0 10px;
+        }
+
+        .column h2 {
+            margin-bottom: 10px;
+            font-size: 20px;
+            text-align: center;
+            color: #007bff;
+        }
+
+        .column ul {
+            list-style-type: none;
+            padding: 0;
+            overflow-y: auto;
+            max-height: 100%;
+            /* Adjust the height as needed */
+        }
+
+        .column ul li {
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <input type="text" id="title" value="Lawrence, Kansas" />
+
+        <button class="circle-button">A</button>
+    </header>
+
+    <div class="columns">
+        <div class="column">
+            <h2>Elections</h2>
+            <ul>
+                <!-- Insert long list of items here -->
+                <li>Election 1</li>
+                <li>Election 2</li>
+                <!-- More items -->
+            </ul>
+        </div>
+        <div class="column">
+            <h2>Upcoming</h2>
+            <ul>
+                <!-- Insert long list of items here -->
+                <li>Event 1</li>
+                <li>Event 2</li>
+                <!-- More items -->
+            </ul>
+        </div>
+        <div class="column">
+            <h2>General</h2>
+            <ul>
+                <!-- Insert long list of items here -->
+                <li>Info 1</li>
+                <li>Info 2</li>
+                
+                <!-- More items -->
+            </ul>
+        </div>
+    </div>
+</body>
