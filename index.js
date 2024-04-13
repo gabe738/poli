@@ -34,6 +34,7 @@ app.get("/signUp", (req, res) => {
     const email = sanitize(req.body.email);
     const phoneNumber = sanitize(req.body.phoneNumber);
     const city = sanitize(req.body.city);
+    const DOB = sanitize(req.body.DOB)
 
 
     if (!username || !password) {
@@ -57,7 +58,8 @@ app.get("/signUp", (req, res) => {
         password_hash: passHash,
         email: email,
         phoneNumber: phoneNumber,
-        city: city
+        city: city,
+        DOB: DOB
     })
 })
 
