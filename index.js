@@ -17,12 +17,6 @@ const PORT = process.env.PORT || 6969;
 app.set("view engine", "ejs");
 app.use(express.json());
 
-
-const sanitize = data => {
-    // deletes characters that could cause cross-site scripting
-    return escape(data.replaceAll(/(<|>|\/|"|'|`|\\)/g, "")).trim();
-}
-
 // load static files
 app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, "./views/main/index.html")); // load main
@@ -36,28 +30,40 @@ app.get("/login", (req, res) => {
     res.sendFile(path.join(__dirname, "./views/login/login.html")); // load login page
 })
 
+const allowedCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+
 app.post("/register", async (req, res) => { // runs after user clicks signup
-    const name = sanitize(req.body.name);
-    const username = sanitize(req.body.username);
-    const password = sanitize(req.body.password);
-    const confirmed_password = sanitize(req.body.confirm_password);
-    const email = sanitize(req.body.email);
-    const phoneNumber = sanitize(req.body.phone);
+    const name = req.body.name;
+    const username = req.body.username;
+    const password = req.body.password;
+    const confirmed_password = req.body.confirm_password;
+    const email = req.body.email;
+    const phoneNumber = req.body.phone;
 
     if (!username || !password) { // missing required fields
         res.sendStatus(400); // bad request
         return;
     }
 
+    for (const character of username)
+        if (!allowedCharacters.includes(character)) {
+            res.status(400).send("Error: Username can only contain letters and numbers.");
+            return;
+        }
+
+    for (const character of username)
+        if (!allowedCharacters.includes(character)) {
+            res.status(400).send("Error: Username can only contain letters and numbers.");
+            return;
+        }
+
     if (password != confirmed_password) { // check that both passwords forms match
         res.status(400).send("Error: The passwords do not match, please try again.");
         return;
     }
 
-
     const passHash = crypto.createHash("sha256"); // save passwords securely
     passHash.update(password);
-
 
     // is the username/email taken?
     const foundUser = await users.findOne({ 
@@ -91,8 +97,8 @@ app.post("/register", async (req, res) => { // runs after user clicks signup
 })
 
 app.post("/login", async (req, res) => {
-    const email = sanitize(req.body.email);
-    const password = sanitize(req.body.password);
+    const email = req.body.email;
+    const password = req.body.password;
 
     if (!email || !password) { // There wasn't a username or password
         res.sendStatus(400); // bad request
@@ -104,14 +110,12 @@ app.post("/login", async (req, res) => {
     
     const foundUser = await users.findOne({ email: email.toLowerCase() }) // Checks for a user with that name
     
-    if (!foundUser) { // When it can't find a user
+    if (!foundUser) { // wrong username
         res.status(400).send("Error: User not found!"); // bad request
         return;
     }
 
-
-
-    if (foundUser.password_hash != passHash.digest("hex")) { // The incorrect password was used
+    if (foundUser.password_hash != passHash.digest("hex")) { // wrong password
         res.status(401).send("Error: Password incorrect!"); // unauthorized
         return;
     }
@@ -124,6 +128,7 @@ app.post("/login", async (req, res) => {
     // set cookie
     users.updateOne({ _id: foundUser._id }, { $set: { cookie: userCookie } });
 
+    // send cookie
     res.status(200).json({ cookie: userCookie });
 })
 
@@ -131,8 +136,8 @@ app.get("/assets/favicon.ico", (req, res) => {
     res.sendFile(path.join(__dirname, "./favicon.ico"));
 })
 
-app.get("*", (req, res) => { // Our 404 page so we don't show a blank error
+app.get("*", (req, res) => { // 404 page
     res.sendFile(path.join(__dirname, "./404.html"));
 })
 
-app.listen(PORT, () => console.log(`listening on port ${PORT}`)); // Boilerplate
+app.listen(PORT, () => console.log(`listening on port ${PORT}`)); // start server
