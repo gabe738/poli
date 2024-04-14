@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>town</title>
+    <title>politi.tech</title>
     <script src="script.js" defer></script>
+    <link rel="icon" type="image/x-icon" href="/assets/favicon.ico">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Roboto');
 
@@ -23,24 +24,10 @@
         }
 
         body {
-            background: linear-gradient(
-                25deg,
-                hsl(269.07, 100%, 19.02%) 0%,
-                hsl(269.4, 99.47%, 18.83%) 8.1%,
-                hsl(270.37, 97.92%, 18.29%) 15.5%,
-                hsl(272.07, 95.33%, 17.45%) 22.5%,
-                hsl(274.67, 91.6%, 16.37%) 29%,
-                hsl(278.57, 86.54%, 15.11%) 35.3%,
-                hsl(284.47, 79.86%, 13.71%) 41.2%,
-                hsl(293.85, 71.12%, 12.22%) 47.1%,
-                hsl(308.71, 63.46%, 11.8%) 52.9%,
-                hsl(325.3, 58.56%, 12.27%) 58.8%,
-                hsl(342.36, 54.26%, 12.7%) 64.7%,
-                hsl(359.07, 50.62%, 13.1%) 71%,
-                hsl(11.6, 66.75%, 11.9%) 77.5%,
-                hsl(18.63, 83.02%, 10.89%) 84.5%,
-                hsl(22.34, 95.26%, 10.23%) 91.9%,
-                hsl(23.53, 100%, 10%) 100%
+            background-image: linear-gradient(
+                -37deg,
+                #3da650,
+                #3c38ab
             );
         }
 
@@ -55,25 +42,47 @@
             width: min-content;
         }
 
-        #title {
-            font-size: 54px;
+        #search-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 400px;
+        }
+
+        #search-box {
+            width: 325px;
+            height: 50px;
+            font-size: 24px;
             color: #fff;
+            align-self: center;
+            font-size: 24px;
             font-weight: bolder;
+            background: transparent;
+            padding: 3px;
+            border: none;
+            outline: none;
+            box-sizing: border-box;
+            border-top: 2px solid transparent;
+            border-bottom: 2px solid #fff;
+        }
+
+        #title:hover {
+            border-top: 2.5px solid transparent;
+            border-bottom: 2.5px solid #fff;
         }
 
         #area {
             margin-top: -35px;
-
             font-size: 24px;
             color: #fff;
             opacity: 0.75;
         }
 
-        #title, #area {
+        #area {
             width: max-content;
         } 
 
-        #title:hover, #area:hover {
+        #area:hover {
             cursor: pointer;
             text-decoration: underline;
         }
@@ -84,11 +93,17 @@
             padding: 0;
         }
 
-        header {
-            background-color: #333;
-            color: #fff;
+        #header {
+            height: 100px;
+            background: rgba( 255, 255, 255, 0.075 );
+            box-shadow: 0 2px 24px 0 rgba(225, 225, 231, 0.25);
+            backdrop-filter: blur( 7px );
+            -webkit-backdrop-filter: blur( 6px );
+            border-bottom: 3px solid rgba( 255, 255, 255, 0.18 );
             padding: 10px;
-            text-align: center;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
         .circle-button {
@@ -136,90 +151,54 @@
         .column ul li {
             margin-bottom: 5px;
         }
+
+        #logo {
+            width: 128px;
+            height: 128px;
+            
+            top: 0;
+            left: 15px;
+
+            transition: 250ms;
+        }
+
+        #logo:hover {
+            cursor: pointer;
+            transform: scale(1.05);
+        }
+
+        .circle-button {
+            width: 85px;
+            height: 85px;
+
+            font-size: 36px;
+        }
+
+        #search-icon {
+            width: 35px;
+            height: 35px;
+
+            margin: 0 15px;
+        }
+
+        ::placeholder {
+            color: #aaa;
+        }
     </style>
 </head>
 <body>
-    <div id="top-left">
-        <h1 id="title">poli</h1>
-        <h2 id="area">ozark, mo</h2>
-    </div>
-    <header>
-        <input type="text" id="title" value="Lawrence, Kansas" />
+    <div id="header">
+        <a href="/">
+            <img id="logo" src="https://i.imgur.com/ayDpTFD.png" />
+        </a>
+        <div id="search-container">
+            <input type="text" id="search-box" placeholder="City, State" />
+            <svg id="search-icon" xmlns="http://www.w3.org/2000/svg" fill="#fff"  viewBox="0 0 512 512"><!--!Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z"/></svg>
+        </div>
 
         <button class="circle-button">A</button>
-    </header>
-
-    <div class="columns">
-        <div class="column">
-            <h2>Elections</h2>
-            <ul>
-                <!-- Insert long list of items here -->
-                <li>Election 1</li>
-                <li>Election 2</li>
-                <li>Election 1</li>
-                <li>Election 2</li>
-                <li>Election 1</li>
-                <li>Election 2</li>
-                <li>Election 1</li>
-                <li>Election 2</li>
-                <li>Election 1</li>
-                <li>Election 2</li>
-                <li>Election 1</li>
-                <li>Election 2</li>
-                <li>Election 1</li>
-                <li>Election 2</li>
-                <li>Election 1</li>
-                <li>Election 2</li>
-                <li>Election 1</li>
-                <li>Election 2</li>
-                <li>Election 1</li>
-                <li>Election 2</li>
-                <li>Election 1</li>
-                <li>Election 2</li>
-                <li>Election 1</li>
-                <li>Election 2</li>
-                <li>Election 1</li>
-                <li>Election 2</li>
-                <li>Election 1</li>
-                <li>Election 2</li>
-                <li>Election 1</li>
-                <li>Election 2</li>
-                <li>Election 1</li>
-                <li>Election 2</li>
-                <li>Election 1</li>
-                <li>Election 2</li>
-                <li>Election 1</li>
-                <li>Election 2</li>
-                <li>Election 1</li>
-                <li>Election 2</li>
-                <li>Election 1</li>
-                <li>Election 2</li>
-                <li>Election 1</li>
-                <li>Election 2</li>
-                <li>Election 1</li>
-                <li>Election 2</li>
-                <!-- More items -->
-            </ul>
-        </div>
-        <div class="column">
-            <h2>Upcoming</h2>
-            <ul>
-                <!-- Insert long list of items here -->
-                <li>Event 1</li>
-                <li>Event 2</li>
-                <!-- More items -->
-            </ul>
-        </div>
-        <div class="column">
-            <h2>General</h2>
-            <ul>
-                <!-- Insert long list of items here -->
-                <li>Info 1</li>
-                <li>Info 2</li>
-                
-                <!-- More items -->
-            </ul>
-        </div>
     </div>
+
+
 </body>
 </html>
