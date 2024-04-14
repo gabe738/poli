@@ -1,53 +1,48 @@
 const express = require("express");
 const mongo = require("mongodb");
-const timeManager = require("./timeManager.js");
+const timeManager = require("./timeManager.js"); // I MADE THIS! It uses ISO 8601 and turns it into time in milliseconds to enable easy comparisons from time
 const app = express();
 
-const sanitize = data => {
+const sanitize = data => { // Redefining it because we felt it was easier to copy paste instead of importing it
     return escape(data.replaceAll(/(<|>|\/|"|'|`|\\)/g, "")).trim(); // improve fr
 }
 
-app.get("/newPost", (req, res) => { // authorId, titleIn, content, isComment
+app.get("/newPost", (req, res) => { // authorId, titleIn, content, isComment(not used) ---- USED to create new posts after sanatizing
     const authorIdIn = req.body.authorId;
     const titleIn = sanitize(req.body.titleIn);
     const contentIn = sanitize(req.body.content);
     const isComment = req.body.isComment;
 
-    const client = new mongo.MongoClient(process.env.uri);
-
+    const client = new mongo.MongoClient(process.env.uri); // The mongoDB setup code
     client.connect();
-
     const db = client.db("town");   
     const posts = db.collection("posts");
     const users = db.collection("users");
 
-    const author = users.findOne({_id: authorIdIn});
+    const author = users.findOne({_id: authorIdIn}); // We attach the author to help with moderation
 
-    posts.insertOne({
+    posts.insertOne({ 
         authorId: authorIdIn,
         title: titleIn,
         content: contentIn,
-        time: timeManager.getTime(),
+        time: timeManager.getTime(),  // Still really proud I made this
         city: author.city,
         isComment: isCommentIn
     });
 
-    client.close();
+    client.close(); // Gotta tie up those loose ends
 });
 
 app.post("/retrieveAllPosts", (req, res) => { // requests: page
 
-    const client = new mongo.MongoClient(process.env.uri);
-
+    const client = new mongo.MongoClient(process.env.uri); // Generally setting up a MongoDB connection
     client.connect();
-
     const db = client.db("town");
-
     const posts = db.collection("posts");
 
-    const allPosts = posts.find().toArray();
+    const allPosts = posts.find().toArray(); // Takes the posts and puts it into array
     
-    client.close();
+    client.close(); // Closes the loose ends
 
     if (allPosts.length <= req.body.page * 5 || allPosts.length <= 5) res.json(allPosts.slice(0).slice(-5));
     else {
