@@ -200,11 +200,11 @@
         
 
         // Sends the stuff to posts.js so it can interact with MongoDB
-        fetch('/signup', {
-            method: 'POST',
+        fetch("/signup", {
+            method: "POST",
             body: JSON.stringify(Object.fromEntries(formData)),
             headers: {
-                'Content-Type': 'application/json'
+                "Content-Type": "application/json"
             }
         })
         .then(async response => {
