@@ -212,8 +212,8 @@
                 if (!value) return; // the user left something blank
 
             // send data to backend
-            fetch('/register', {
-                method: 'POST',
+            fetch("/register", {
+                method: "POST",
                 body: JSON.stringify(Object.fromEntries(formData)),
                 headers: { "Content-Type": "application/json" }
             })
