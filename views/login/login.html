@@ -4,7 +4,7 @@
         <title>politi.tech - login</title>
         <link rel="icon" type="image/x-icon" href="/assets/favicon.ico">
         <style>
-        @import url('https://fonts.googleapis.com/css2?family=Roboto');
+        @import url("https://fonts.googleapis.com/css2?family=Roboto");
             * {
                 font-family: "Roboto";
                 user-select: none;
@@ -208,8 +208,8 @@
                     if (!value) return; // the user left something blank
 
                 // send data to backend
-                fetch('/login', {
-                    method: 'POST',
+                fetch("/login", {
+                    method: "POST",
                     body: JSON.stringify(Object.fromEntries(formData)),
                     headers: { "Content-Type": "application/json" }
                 })
