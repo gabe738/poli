@@ -5,7 +5,8 @@ const { parse } = require("csv-parse");
 const app = express();
 
 const sanitize = data => {
-    return escape(data.replaceAll(/(<|>|\/|"|'|`|\\)/g, "")).trim(); // improve fr
+    // deletes characters that could cause cross-site scripting
+    return escape(data.replaceAll(/(<|>|\/|"|'|`|\\)/g, "")).trim();
 }
 
 

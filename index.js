@@ -17,8 +17,9 @@ const PORT = process.env.PORT || 6969;
 app.set("view engine", "ejs");
 app.use(express.json());
 
-// gotta prevent that cross-site scripting
+
 const sanitize = data => {
+    // deletes characters that could cause cross-site scripting
     return escape(data.replaceAll(/(<|>|\/|"|'|`|\\)/g, "")).trim();
 }
 
@@ -48,7 +49,7 @@ app.post("/signup", async (req, res) => { // runs after user clicks signup
         return;
     }
 
-    if (password != confirmed_password) {
+    if (password != confirmed_password) { // check that both passwords forms match
         res.status(400).send("Error: The passwords do not match, please try again.");
         return;
     }
@@ -71,9 +72,10 @@ app.post("/signup", async (req, res) => { // runs after user clicks signup
         return;
     }
 
-    const userCookie = crypto.randomUUID(); // secure random string
+    const userCookie = crypto.randomUUID(); // secure random string for cookies
 
     users.insertOne({
+        // add user profile to database
         name: name,
         username: username,
         username_lower: username.toLowerCase(),
