@@ -230,9 +230,8 @@
 
                     const { cookie } = await response.json();
                     localStorage.cookie = cookie;
-                    console.log(cookie);
 
-
+                    location.assign("/");
                 }
             })
         });
