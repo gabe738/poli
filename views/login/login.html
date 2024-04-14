@@ -1,135 +1,236 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <title>politi.tech - login</title>
-    <link rel="icon" type="image/x-icon" href="/assets/favicon.ico">
-    <style>
-    @import url('https://fonts.googleapis.com/css2?family=Roboto');
-        * {
-            font-family: "Roboto";
-            user-select: none;
+    <head>
+        <title>politi.tech - login</title>
+        <link rel="icon" type="image/x-icon" href="/assets/favicon.ico">
+        <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto');
+            * {
+                font-family: "Roboto";
+                user-select: none;
+                
+            }
             
-        }
-        
-        html, body {
-            width: 100%;
-            height: 100%;
-        
-            margin: 0;
-            padding: 0;
-        
-            box-sizing: border-box;
-        }
-        
-        body {
-            background: linear-gradient(
-                60deg,
-                #52bfbf,
-                #e84a7a 
-            );
-        
-            display: grid;
-            place-content: center;
-        }
-        
-        #title {
-            font-size: 54px;
-            color: #fff;
-            font-weight: bolder;
-        }
-        
-        #title {
-            width: max-content;
-        } 
-        
-        #title:hover {
-            cursor: pointer;
-            text-decoration: underline;
-        }
-        
-        #middle {
-            width: 500px;
-            height: 500px;
-        
-            background: #222;
-            border-radius: 15px;
-            border: 2px solid black;
-        
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        
-        }
-        
-        #login {
-            font-size: 54px;
-            color: #fff;
-            font-weight: bolder;
-        }
-        
-        #username {
-            font-size: 30px;
-            color: black;
-            font-weight: bolder;
-            border-width: medium;
-        
+            html, body {
+                width: 100%;
+                height: 100%;
             
-        }
-        
-        #usernameText {
-            font-size: 30px;
-            color: #fff;
-            font-weight: bolder;
-            margin-bottom: 5px;
-        }
-        
-        #password {
-            font-size: 30px;
-            color: black;
-            font-weight: bolder;
-            border-width: medium;
-        }
-        
-        #passwordText {
-            font-size: 30px;
-            color: #fff;
-            font-weight: bolder;
-            margin-bottom: 5px;
-        }
-
-        #logo {
-            width: 128px;
-            height: 128px;
+                margin: 0;
+                padding: 0;
             
-            position: fixed;
+                box-sizing: border-box;
+            }
+            
+            body {
+                background: linear-gradient(
+                    60deg,
+                    #52bfbf,
+                    #e84a7a 
+                );
+            
+                display: grid;
+                place-content: center;
+            }
 
-            top: 0;
-            left: 15px;
+            #logo {
+                width: 128px;
+                height: 128px;
+                
+                position: fixed;
 
-            transition: 250ms;
-        }
+                top: 0;
+                left: 15px;
 
-        #logo:hover {
-            cursor: pointer;
-            transform: scale(1.05);
-        }
-    </style>
-    <script src="script.js" defer></script>
-    <link rel="stylesheet" href="loginStyle.css">
-</head>
-<body>
-    <a href="/">
-        <img id="logo" src="https://i.imgur.com/ayDpTFD.png" />
-    </a>
-    <div id="middle">
-        <h2 id="login">Login</h2>
-        <form id="sign-in-form">
-            <h3 id="usernameText">Username</h3>
-            <input type="text" id="username" name="username"><br>
-            <h4 id="passwordText">Password</h4>
-            <input type="password" id="password" name="password"><br>
-        </form>
-    </div>
+                transition: 250ms;
+            }
 
-</body>
+            #logo:hover {
+                cursor: pointer;
+                transform: scale(1.05);
+            }
+
+            .container {
+                color: #fff;
+                width: 400px;
+                height: max-content;
+                background: rgba( 255, 255, 255, 0.1 );
+                box-shadow: 0 2px 24px 0 rgba(225, 225, 231, 0.2);
+                backdrop-filter: blur( 3px );
+                -webkit-backdrop-filter: blur( 3px );
+                border-radius: 20px;
+                border: 3px solid rgba( 255, 255, 255, 0.18 );
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+
+            #signup-form {
+                width: 92.5%;
+
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+
+                margin-bottom: 15px;
+            }
+
+            h2 {
+                text-align: center;
+                margin-bottom: 5px;
+            }
+
+            label {
+                display: block;
+                font-size: 20px;
+            }
+
+            input[type="text"],
+            input[type="password"],
+            input[type="email"] {
+                width: 100%;
+                height: 30px;
+                font-size: 20px;
+                border: 1px solid #ccc;
+                box-sizing: border-box;
+                border-radius: 4px;
+                vertical-align: center;
+                outline: none;
+                border: none;
+                border-top: 1px solid transparent;
+                border-bottom: 1px solid #fff;
+                border-radius: 0;
+                background: transparent;
+                color: #fff9;
+            }
+
+            input:focus {
+                border-top: 2px solid transparent;
+                border-bottom: 2px solid #fff;
+            }
+
+            button {
+                font-weight: 500;
+                width: 100%;
+                font-size: 20px;
+                padding: 10px;
+                background-color: #007bff;
+                color: #fff;
+                border: none;
+                border-radius: 6px;
+                cursor: pointer;
+
+                margin-top: 7.5px;
+
+                transition: 150ms;
+            }
+
+            button:hover {
+                background-color: #0063cc;
+            }
+
+            #message {
+                width: max-content;
+                text-align: center;
+                font-family: monospace;
+                color: #f00;
+                margin-bottom: 15px;
+                background: #eeeb;
+                border: 1px solid #000f;
+                border-radius: 3px;
+                margin: 15px auto;
+                padding: 3px;
+                display: none;
+            }
+
+            #signup {
+                font-size: 44px;
+                font-weight: bolder;
+                margin-top: 10px;
+                margin-bottom: 0;
+            }
+
+            #login-here {
+                margin: 0;
+                opacity: 0.7;
+                font-size: 19px;
+                text-align: center;
+                margin-bottom: 30px;
+            }
+
+            a {
+                color: #55f;
+            }
+
+            .form-group {
+                width: 100%;
+                margin-bottom: 15px;
+            }
+
+            ::placeholder {
+                color: #b2b2b2;
+            }
+        </style>
+        <script src="script.js" defer></script>
+        <link rel="stylesheet" href="loginStyle.css">
+    </head>
+    <body>
+        <a href="/">
+            <img id="logo" src="https://i.imgur.com/ayDpTFD.png" />
+        </a>
+        <div class="container">
+            <!-- Logan - hot man he is - got the divs set up gorgeously to make this perfect HTML -->
+            <div>
+                <h2 id="signup">Login</h2>
+                <p id="login-here">Don't have an account? Sign up <a href="/register" >here</a>!</p>
+            </div>
+            <form id="signup-form">
+                <div class="form-group">
+                    <label>Email:</label>
+                    <input type="email" id="email" name="email" placeholder="john@smith.org">
+                </div>
+                <div class="form-group">
+                    <label>Password:</label>
+                    <input type="password" id="password" name="password" placeholder="&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;"> 
+                </div>
+                <button type="submit">Login</button>
+            </form>
+            <p id="message"></p>
+        </div>
+        <script defer>
+            document.getElementById("signup-form").addEventListener("submit", event => {
+                event.preventDefault(); // prevent yucky default form submission behavior
+                
+                const formData = new FormData(event.target); // get form data
+
+                const formContents = Object.fromEntries(formData);
+
+                for (const value in Object.values(formContents))
+                    if (!value) return; // the user left something blank
+
+                // send data to backend
+                fetch('/login', {
+                    method: 'POST',
+                    body: JSON.stringify(Object.fromEntries(formData)),
+                    headers: { "Content-Type": "application/json" }
+                })
+                .then(async response => {
+                    const messageEl = document.querySelector("#message");
+                    
+                    if (!response.ok) { // something went wrong
+                        const responseText = await response.text();
+            
+                        messageEl.style.display = "block";
+                        messageEl.innerText = responseText;
+                    } else { // success
+                        messageEl.style.display = "none";
+
+                        console.log(response)
+                        const { cookie } = await response.json();
+                        localStorage.cookie = cookie;
+                        console.log(cookie);
+                    }
+                })
+            });
+        </script>
+    </body>
 </html>

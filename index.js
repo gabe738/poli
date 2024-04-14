@@ -90,11 +90,11 @@ app.post("/register", async (req, res) => { // runs after user clicks signup
     console.log("user created:", username);
 })
 
-app.post("/login", (req, res) => {
-    const username = sanitize(req.body.username);
+app.post("/login", async (req, res) => {
+    const email = sanitize(req.body.email);
     const password = sanitize(req.body.password);
 
-    if (!username || !password) { // There wasn't a username or password
+    if (!email || !password) { // There wasn't a username or password
         res.sendStatus(400); // bad request
         return;
     }
@@ -102,19 +102,29 @@ app.post("/login", (req, res) => {
     const passHash = crypto.createHash("sha256");
     passHash.update(password);
     
-    const foundUser = users.findOne({ username_lower: username.toLowerCase() }) // Checks for a user with that name
+    const foundUser = await users.findOne({ email: email.toLowerCase() }) // Checks for a user with that name
     
     if (!foundUser) { // When it can't find a user
-        res.sendStatus(400); // bad request
+        res.status(400).send("Error: User not found!"); // bad request
         return;
     }
+
+
 
     if (foundUser.password_hash != passHash.digest("hex")) { // The incorrect password was used
-        res.sendStatus(401); // unauthorized
+        res.status(401).send("Error: Password incorrect!"); // unauthorized
         return;
     }
 
-    // successfully loged in !!! (need ot code)
+    // successfully logged in
+    
+    // generate cookie
+    const userCookie = crypto.randomUUID();
+
+    // set cookie
+    users.updateOne({ _id: foundUser._id }, { $set: { cookie: userCookie } });
+
+    res.status(200).json({ cookie: userCookie });
 })
 
 app.get("/assets/favicon.ico", (req, res) => {
