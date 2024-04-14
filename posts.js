@@ -7,10 +7,11 @@ const sanitize = data => { // Redefining it because we felt it was easier to cop
     return escape(data.replaceAll(/(<|>|\/|"|'|`|\\)/g, "")).trim(); // improve fr
 }
 
-app.get("/newPost", (req, res) => { // authorId, titleIn, content, isComment(not used) ---- USED to create new posts after sanatizing
+app.get("/newPost", (req, res) => { // authorId, titleIn, content, city, isComment(not used) ---- USED to create new posts after sanatizing
     const authorIdIn = req.body.authorId;
     const titleIn = sanitize(req.body.titleIn);
     const contentIn = sanitize(req.body.content);
+    const cityIn = req.body.city;
     const isComment = req.body.isComment;
 
     const client = new mongo.MongoClient(process.env.uri); // The mongoDB setup code
@@ -26,21 +27,23 @@ app.get("/newPost", (req, res) => { // authorId, titleIn, content, isComment(not
         title: titleIn,
         content: contentIn,
         time: timeManager.getTime(),  // Still really proud I made this
-        city: author.city,
+        city: cityIn,
         isComment: isCommentIn
     });
 
     client.close(); // Gotta tie up those loose ends
 });
 
-app.post("/retrieveAllPosts", (req, res) => { // requests: page
+app.post("/retrieveAllPosts", (req, res) => { // requests: page, city
+
+    const cityIn = req.body.city;
 
     const client = new mongo.MongoClient(process.env.uri); // Generally setting up a MongoDB connection
     client.connect();
     const db = client.db("town");
     const posts = db.collection("posts");
 
-    const allPosts = posts.find().toArray(); // Takes the posts and puts it into array
+    const allPosts = posts.find({city: cityIn}).toArray(); // Takes the posts and puts it into array
     
     client.close(); // Closes the loose ends
 
@@ -57,6 +60,8 @@ app.post("/retrieveAllPosts", (req, res) => { // requests: page
 
 app.post("/searchPosts", (req, res) => { // searchTerm, page
 
+    const cityIn = req.body.city;
+
     const search = sanitize(req.body.searchTerm);
     
     const client = new mongo.MongoClient(process.env.uri);
@@ -68,7 +73,8 @@ app.post("/searchPosts", (req, res) => { // searchTerm, page
     const posts = db.collection("posts");
 
     const allPosts = posts.find({
-        title: search
+        title: search,
+        city: cityIn
     }).toArray();
     
     client.close();
