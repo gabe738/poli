@@ -28,15 +28,15 @@ app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, "./views/main/index.html")); // load main
 })
 
-app.get("/signup", (req, res) => {
-    res.sendFile(path.join(__dirname, "./views/createAccount/index.html")); // load signup page
+app.get("/register", (req, res) => {
+    res.sendFile(path.join(__dirname, "./views/signUp/signUp.html")); // load signup page
 })
 
 app.get("/login", (req, res) => {
     res.sendFile(path.join(__dirname, "./views/login/login.html")); // load login page
 })
 
-app.post("/signup", async (req, res) => { // runs after user clicks signup
+app.post("/register", async (req, res) => { // runs after user clicks signup
     const name = sanitize(req.body.name);
     const username = sanitize(req.body.username);
     const password = sanitize(req.body.password);
@@ -117,7 +117,9 @@ app.post("/login", (req, res) => {
     // successfully loged in !!! (need ot code)
 })
 
-
+app.get("/assets/favicon.ico", (req, res) => {
+    res.sendFile(path.join(__dirname, "./favicon.ico"));
+})
 
 app.get("*", (req, res) => { // Our 404 page so we don't show a blank error
     res.sendFile(path.join(__dirname, "./404.html"));

@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <title>404</title>
+    <link rel="icon" type="image/x-icon" href="/assets/favicon.ico">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Roboto');
 
@@ -68,9 +69,29 @@
 
             margin: 10px;
         }
+
+        #logo {
+            width: 128px;
+            height: 128px;
+            
+            position: fixed;
+
+            top: 0;
+            left: 15px;
+            
+            transition: 250ms;
+        }
+
+        #logo:hover {
+            cursor: pointer;
+            transform: scale(1.05);
+        }
     </style>
 </head>
 <body>
+    <a href="/">
+        <img id="logo" src="https://i.imgur.com/ayDpTFD.png" />
+    </a>
     <div id="info">
         <span id="error">404</span>
         <div id="spacer"></div>
