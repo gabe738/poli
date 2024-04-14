@@ -48,7 +48,7 @@
             grid-template-columns: 45% 45%;
             gap: 20px;
 
-            margin-bottom: 25px;
+            margin-bottom: 15px;
         }
 
         h2 {
@@ -86,19 +86,17 @@
             border-bottom: 2px solid #fff;
         }
 
-        button {
+        #login-button {
             font-weight: 500;
             font-size: 20px;
-            width: 208%; /* ?? */   
+            width: 209%; /* ?? */   
             padding: 10px;
             background-color: #007bff;
             color: #fff;
             border: none;
             border-radius: 6px;
             cursor: pointer;
-
-            margin-top: 7.5px;
-
+            position: relative;
             transition: 150ms;
         }
 
@@ -111,6 +109,7 @@
             text-align: center;
             font-family: monospace;
             color: #f00;
+            grid-column: span 2;
             margin-bottom: 15px;
             background: #eeeb;
             border: 1px solid #000f;
@@ -118,6 +117,8 @@
             margin: 15px auto;
             padding: 3px;
             display: none;
+            margin-top: 0;
+            margin-bottom: 0;
         }
 
         #signup {
@@ -174,61 +175,68 @@
         <form id="signup-form">
             <div class="form-group">
                 <label>Name:</label>
-                <input type="text" id="name" name="name" placeholder="John Smith" required>
+                <input type="text" id="name" name="name" placeholder="John Smith">
             </div>
             <div class="form-group">
                 <label>Username:</label>
-                <input type="text" id="username" name="username" placeholder="johnsmith32" required>
+                <input type="text" id="username" name="username" placeholder="johnsmith32">
             </div>
             <div class="form-group">
                 <label>Email:</label>
-                <input type="email" id="email" name="email" placeholder="john@smith.org" required>
+                <input type="email" id="email" name="email" placeholder="john@smith.org">
             </div>
             <div class="form-group">
                 <label>Password:</label>
-                <input type="password" id="password" name="password" placeholder="&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;" required> 
+                <input type="password" id="password" name="password" placeholder="&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;"> 
             </div>
             <div class="form-group">
                 <label>Phone Number:</label>
-                <input type="tel" id="phone" name="phone" placeholder="+1 (505) 842-5662" required>
+                <input type="tel" id="phone" name="phone" placeholder="+1 (505) 842-5662"> <!-- saul goodmans phone number :) -->
             </div>
             <div class="form-group">
                 <label>Confirm Password:</label>
-                <input type="password" id="confirm_password" name="confirm_password" placeholder="&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;" required>
+                <input type="password" id="confirm_password" name="confirm_password" placeholder="&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;">
             </div>
-            <button type="submit">Sign Up</button>
+            <p id="message"></p>
+            <button id="login-button" type="submit">Sign Up</button>
         </form>
-        <p id="message"></p>
     </div>
 </body>
+    <script defer>
+        document.getElementById("signup-form").addEventListener("submit", event => {
+            event.preventDefault(); // prevent yucky default form submission behavior
+            
+            const formData = new FormData(event.target); // get form data
 
+            const formContents = Object.fromEntries(formData);
 
-<script defer>
-    document.getElementById("signup-form").addEventListener("submit", function(event) {
-        event.preventDefault(); // prevent yucky default form submission behavior
-        
-        const formData = new FormData(this); // get form data
+            for (const value in Object.values(formContents))
+                if (!value) return; // the user left something blank
 
-        // send data to backend
-        fetch('/register', {
-            method: 'POST',
-            body: JSON.stringify(Object.fromEntries(formData)),
-            headers: { "Content-Type": "application/json" }
-        })
-        .then(async response => {
-            if (!response.ok) { // something went wrong
+            // send data to backend
+            fetch('/register', {
+                method: 'POST',
+                body: JSON.stringify(Object.fromEntries(formData)),
+                headers: { "Content-Type": "application/json" }
+            })
+            .then(async response => {
                 const messageEl = document.querySelector("#message");
-                const responseText = await response.text();
-    
-                messageEl.style.display = "block";
-                messageEl.innerText = responseText;
-            } else { // success
-                console.log(response)
-                const { cookie } = await response.json();
-                localStorage.cookie = cookie;
-                console.log(cookie);
-            }
-        })
-    });
-</script>
+
+                if (!response.ok) { // something went wrong
+                    const responseText = await response.text();
+        
+                    messageEl.style.display = "block";
+                    messageEl.innerText = responseText;
+                } else { // success
+                    messageEl.style.display = "none";
+
+                    const { cookie } = await response.json();
+                    localStorage.cookie = cookie;
+                    console.log(cookie);
+
+
+                }
+            })
+        });
+    </script>
 </html>
