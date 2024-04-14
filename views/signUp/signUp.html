@@ -8,12 +8,13 @@
     <title>politi.tech - register</title>
     <link rel="icon" type="image/x-icon" href="/assets/favicon.ico">
     <style>
-        * {
-            user-select: none;
-        }
+        @import url('https://fonts.googleapis.com/css2?family=Roboto');
+            * {
+                font-family: "Roboto";
+                user-select: none;
+            }
 
         body {
-            font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
             display: flex;
@@ -147,17 +148,14 @@
         #logo {
             width: 128px;
             height: 128px;
-            
             position: fixed;
-
             top: 0;
             left: 15px;
-
             transition: 250ms;
+            cursor: pointer;
         }
 
         #logo:hover {
-            cursor: pointer;
             transform: scale(1.05);
         }
     </style>
@@ -172,7 +170,7 @@
             <h2 id="signup">Create Account</h2>
             <p id="login-here">Already have an account? Login <a href="/login" >here</a>!</p>
         </div>
-        <form id="signup-form">
+        <form id="signup-form" autocomplete="off">
             <div class="form-group">
                 <label>Name:</label>
                 <input type="text" id="name" name="name" placeholder="John Smith">

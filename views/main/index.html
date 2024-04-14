@@ -2,15 +2,91 @@
 <html lang="en">
 <head>
     <title>politi.tech</title>
-    <script src="script.js" defer></script>
     <link rel="icon" type="image/x-icon" href="/assets/favicon.ico">
+    <script defer>
+        const mod = (n, m) => ((n % m) + m) % m;
+
+        window.userInfo = { signedIn: false, name: "", username: "" }; // may be a useful tool in the future
+
+        if (localStorage.cookie) {
+            fetch("/accountInfo", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ cookie: localStorage.cookie })
+            }).then(async userInfo => {
+                if (!userInfo)
+                    return;
+
+                const { name, username } = await userInfo.json();
+
+                window.userInfo = { signedIn: true, name, username };
+
+                document.querySelector("#search-container").style.display = "flex";
+                document.querySelector("#signs").style.display = "none";
+
+                document.querySelector("#account-info").style.display = "flex";
+
+                document.querySelector("#pfp").textContent = window.userInfo.name[0].toUpperCase();
+
+                document.querySelector("#name").textContent = window.userInfo.name;
+                document.querySelector("#username").innerText = `(${window.userInfo.username})`;
+                
+                document.querySelector("#welcome-username").innerText = window.userInfo.name;
+            });
+        }
+
+        // i thought deferring a script waits for this automatically, apparently not
+        window.addEventListener("DOMContentLoaded", () => {
+            const textInput = document.querySelector("#search-box");
+            const ghostBox = document.querySelector("#ghost-box");
+
+            let currentFilters = [];
+
+            let filterIndex = 0;
+
+            textInput.addEventListener("input", event => {
+                ghostBox.value = textInput.value;
+                ghostBox.scrollLeft = ghostBox.scrollWidth;
+
+                if (textInput.value == "")
+                    return;
+
+                fetch("/autocompleteCity", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ searchTerm: textInput.value })
+                }).then(res => res.json()).then(cities => {
+                    currentFilters = cities;
+
+                    filterIndex = 0;
+
+                    if (currentFilters.length > 0)
+                        ghostBox.value = textInput.value + currentFilters[filterIndex].substring(textInput.value.length, currentFilters[filterIndex].length);
+                });
+            })
+
+            window.addEventListener("keydown", event => {
+                if (event.key.toLowerCase() == "tab" && document.activeElement.id == "search-box" && currentFilters.length > 0) {
+                    event.preventDefault();
+
+                    filterIndex -= (event.shiftKey * 2) - 1; // (0, 1) -> (-1, 1)
+                    filterIndex = mod(filterIndex, currentFilters.length);
+
+                    console.log(filterIndex)
+
+                    ghostBox.value = textInput.value + currentFilters[filterIndex].substring(textInput.value.length, currentFilters[filterIndex].length);
+                }
+            })
+        })
+    </script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Roboto');
 
         * {
             font-family: "Roboto";
             user-select: none;
-            
         }
 
         html, body {
@@ -31,26 +107,21 @@
             );
         }
 
-        #top-left {
-            width: 300px;
-            height: 200px;
-
-            position: fixed;
-            left: 10px;
-            top: -30px;
-
-            width: min-content;
-        }
-
         #search-container {
-            display: flex;
+            /* display: flex; */
+            margin-left: 25px;
             justify-content: center;
             align-items: center;
             width: 400px;
+            display: none;
+            position: fixed;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
         }
 
-        #search-box {
-            width: 325px;
+        #search-box, #ghost-box {
+            width: 375px;
             height: 50px;
             font-size: 24px;
             color: #fff;
@@ -64,38 +135,17 @@
             box-sizing: border-box;
             border-top: 2px solid transparent;
             border-bottom: 2px solid #fff;
+            position: absolute;
         }
 
-        #title:hover {
-            border-top: 2.5px solid transparent;
-            border-bottom: 2.5px solid #fff;
-        }
-
-        #area {
-            margin-top: -35px;
-            font-size: 24px;
-            color: #fff;
-            opacity: 0.75;
-        }
-
-        #area {
-            width: max-content;
-        } 
-
-        #area:hover {
-            cursor: pointer;
-            text-decoration: underline;
-        }
-
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
+        #ghost-box {
+            color: #fffa;
+            pointer-events: none; /* can only select the real input */
         }
 
         #header {
             height: 100px;
-            background: rgba( 255, 255, 255, 0.075 );
+            background: rgba( 255, 255, 255, 0.1 );
             box-shadow: 0 2px 24px 0 rgba(225, 225, 231, 0.25);
             backdrop-filter: blur( 7px );
             -webkit-backdrop-filter: blur( 6px );
@@ -106,79 +156,25 @@
             align-items: center;
         }
 
-        .circle-button {
-            background-color: #007bff;
-            color: #fff;
-            border: none;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            font-size: 24px;
-            line-height: 50px;
-            display: inline-block;
-            margin-right: 10px;
-            cursor: pointer;
-        }
-
-        .columns {
-            display: flex;
-            justify-content: space-between;
-            padding: 20px;
-            height: 80vh;
-            /* 80% of the viewport height */
-        }
-
-        .column {
-            flex: 1;
-            margin: 0 10px;
-        }
-
-        .column h2 {
-            margin-bottom: 10px;
-            font-size: 20px;
-            text-align: center;
-            color: #007bff;
-        }
-
-        .column ul {
-            list-style-type: none;
-            padding: 0;
-            overflow-y: auto;
-            max-height: 96%;
-            /* Adjust the height as needed */
-        }
-
-        .column ul li {
-            margin-bottom: 5px;
-        }
-
         #logo {
             width: 128px;
             height: 128px;
-            
             top: 0;
             left: 15px;
-
             transition: 250ms;
+            cursor: pointer;
         }
 
         #logo:hover {
-            cursor: pointer;
             transform: scale(1.05);
         }
 
-        .circle-button {
-            width: 85px;
-            height: 85px;
-
-            font-size: 36px;
-        }
-
         #search-icon {
-            width: 35px;
-            height: 35px;
-
+            width: 30px;
+            height: 30px;
             margin: 0 15px;
+            position: relative;
+            left: 165px;
         }
 
         ::placeholder {
@@ -191,6 +187,80 @@
             border: none;
             cursor: pointer;
         }
+
+        .button {
+            width: 100px;
+            height: 45px;
+            outline: none;
+            border: none;
+            margin: 5px;
+            color: #fff;
+            font-size: 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #signup {
+            background: #42d44b;
+        }
+
+        #signin {
+            background: #007bff;
+        }
+
+        #account-info {
+            margin: 5px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            display: none;
+            gap: 5px;
+        }
+
+        #pfp {
+            background: #78f;
+            width: 68px;
+            height: 68px;
+            border-radius: 50%;
+            display: grid;
+            place-content: center;
+            font-size: 26px;
+            color: #fff;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        #name {
+            color: #fff;
+            font-size: 20px;
+        }
+
+        #username {
+            display: inline;
+            color: #fffa;
+            font-size: 20px;
+        }
+
+        #welcome {
+            width: 100%;
+            text-align: center;
+            position: absolute;
+            bottom: 10px;
+            color: #fff;
+        }
+
+        #welcome-message {
+            display: inline;
+            font-size: 34px;
+            opacity: 0.7;
+        }
+
+        #welcome-username {
+            display: inline;
+            font-size: 36px;
+            font-weight: bolder;
+        }
     </style>
 </head>
 <body>
@@ -200,12 +270,24 @@
         </a>
         <div id="search-container">
             <input type="text" id="search-box" placeholder="City, State" />
-            <button id="search-button"><svg id="search-icon" xmlns="http://www.w3.org/2000/svg" fill="#fff"  viewBox="0 0 512 512"><!--!Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z"/></svg></button>
+            <input type="text" id="ghost-box" /> <!-- autocomplete -->
+            <svg id="search-icon" xmlns="http://www.w3.org/2000/svg" fill="#fff"  viewBox="0 0 512 512"><!--!Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z"/></svg>
         </div>
 
-        <button class="circle-button">A</button>
+        <div id="signs">
+            <button class="button" id="signup" onclick="location.assign('/register')">Register</button>
+            <button class="button" id="signin" onclick="location.assign('/login')">Login</button>
+        </div>
+        <div id="account-info">
+            <a href="/profile" target="_blank" id="pfp"></a> <!-- actual pfp coming in the future -->
+            <div>
+                <span id="name"></span>
+                <span id="username"></span>
+            </div>
+        </div>
     </div>
-
-
+    <div id="welcome">
+        <h1 id="welcome-message">Welcome, </h1><span id="welcome-username"></span>
+    </div>
 </body>
 </html>

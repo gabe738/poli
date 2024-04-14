@@ -1,0 +1,18 @@
+<script>
+    if (!localStorage.cookie)
+        location.assign("/login");
+
+        fetch("/accountInfo", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ cookie: localStorage.cookie })
+        }).then(async response => {
+            if (!response.ok)
+                location.assign("/login");
+
+            const { name, username } = await response.json();
+
+            document.querySelector("#welcome").innerText = `Welcome, ${name}! (username: ${username})`;
+        })
+</script>
+<p id="welcome" ></p>

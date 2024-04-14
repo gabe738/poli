@@ -35,17 +35,14 @@
             #logo {
                 width: 128px;
                 height: 128px;
-                
                 position: fixed;
-
                 top: 0;
                 left: 15px;
-
                 transition: 250ms;
+                cursor: pointer;
             }
 
             #logo:hover {
-                cursor: pointer;
                 transform: scale(1.05);
             }
 
@@ -183,7 +180,7 @@
                 <h2 id="signup">Login</h2>
                 <p id="login-here">Don't have an account? Sign up <a href="/register" >here</a>!</p>
             </div>
-            <form id="signup-form">
+            <form id="signup-form" autocomplete="off">
                 <div class="form-group">
                     <label>Email:</label>
                     <input type="email" id="email" name="email" placeholder="john@smith.org">
@@ -228,6 +225,8 @@
                         const { cookie } = await response.json();
                         localStorage.cookie = cookie;
                         console.log(cookie);
+
+                        location.assign("/");
                     }
                 })
             });
