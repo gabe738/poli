@@ -3,6 +3,8 @@ const express = require("express");
 const mongo = require("mongodb");
 const crypto = require("crypto"); // cryptography, not crypto currency
 const path = require("path");
+const { parse } = require("csv-parse");
+const fs = require("fs");
 const app = express();
 
 // set up mongo using our auth token in .env
@@ -22,6 +24,27 @@ app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, "./views/main/index.html")); // load main
 })
 
+app.post("/autocompleteCity", async (req, res) => { // searchTerm
+    const searchTerm = req.body.searchTerm;
+
+    const possibleCities = [];
+
+    const output2 = fs.readFileSync("./citySearch/output2.csv", { encoding: "utf8" });
+
+    for (let line of output2.split("\n")) {
+        line = line.replace(",", ", ");
+
+        if (line.toLowerCase().startsWith(searchTerm.toLowerCase())) 
+            possibleCities.push(line);
+    }
+    
+    res.json(possibleCities);
+});
+
+app.get("/profile", (req, res) => {
+    res.sendFile(path.join(__dirname, "./views/profile/profile.html")); // load user page
+})
+
 app.get("/register", (req, res) => {
     res.sendFile(path.join(__dirname, "./views/signUp/signUp.html")); // load signup page
 })
@@ -29,8 +52,6 @@ app.get("/register", (req, res) => {
 app.get("/login", (req, res) => {
     res.sendFile(path.join(__dirname, "./views/login/login.html")); // load login page
 })
-
-const allowedCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
 app.post("/register", async (req, res) => { // runs after user clicks signup
     const name = req.body.name;
@@ -46,13 +67,7 @@ app.post("/register", async (req, res) => { // runs after user clicks signup
     }
 
     for (const character of username)
-        if (!allowedCharacters.includes(character)) {
-            res.status(400).send("Error: Username can only contain letters and numbers.");
-            return;
-        }
-
-    for (const character of username)
-        if (!allowedCharacters.includes(character)) {
+        if (!"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".includes(character)) {
             res.status(400).send("Error: Username can only contain letters and numbers.");
             return;
         }
@@ -91,7 +106,7 @@ app.post("/register", async (req, res) => { // runs after user clicks signup
         cookie: userCookie
     })
 
-    res.status(200).json({ cookie: userCookie }); // remember user on the frontent (localhost)
+    res.json({ cookie: userCookie }); // remember user on the frontent (localhost)
 
     console.log("user created:", username);
 })
@@ -129,7 +144,25 @@ app.post("/login", async (req, res) => {
     users.updateOne({ _id: foundUser._id }, { $set: { cookie: userCookie } });
 
     // send cookie
-    res.status(200).json({ cookie: userCookie });
+    res.json({ cookie: userCookie });
+})
+
+app.post("/accountInfo", async (req, res) => {
+    const userCookie = req.body.cookie;
+
+    if (!userCookie) {
+        res.status(400);
+        return;
+    }
+
+    const foundUser = await users.findOne({ cookie: userCookie });
+
+    if (!foundUser) {
+        res.status(400);
+        return;
+    }
+
+    res.send({ name: foundUser.name, username: foundUser.username }); // return user details
 })
 
 app.get("/assets/favicon.ico", (req, res) => {

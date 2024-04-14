@@ -4,14 +4,16 @@ const fs = require("fs");
 const { parse } = require("csv-parse");
 const app = express();
 
+app.use(express.json());
+
 const sanitize = data => {
     // deletes characters that could cause cross-site scripting
     return escape(data.replaceAll(/(<|>|\/|"|'|`|\\)/g, "")).trim();
 }
 
-
 // const temp = async () => {
 app.post("/searchCities", async (req, res) => { // searchTerm
+    console.log(req)
 
     const search = sanitize(req.body.searchTerm);
     // const search = "lawrence";
