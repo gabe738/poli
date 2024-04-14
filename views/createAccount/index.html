@@ -1,3 +1,5 @@
+<!-- The creating account page -->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -153,6 +155,7 @@
 </head>
 <body>
     <div class="container">
+        <!-- Logan - hot man he is - got the divs set up gorgeously to make this perfect HTML -->
         <div>
             <h2 id="signup">Create Account</h2>
             <p id="login-here">Already have an account? Login <a href="/login" >here</a>!</p>
@@ -171,8 +174,8 @@
                 <input type="email" id="email" name="email" placeholder="john@smith.org" required>
             </div>
             <div class="form-group">
-                <label>Password:</label>
-                <input type="password" id="password" name="password" placeholder="&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;" required>
+                <label>Password:</label>website
+                <input type="password" id="password" name="password" placeholder="&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;" required> 
             </div>
             <div class="form-group">
                 <label>Phone Number:</label>
@@ -195,6 +198,8 @@
         
         const formData = new FormData(this); // get form data
         
+
+        // Sends the stuff to posts.js so it can interact with MongoDB
         fetch('/signup', {
             method: 'POST',
             body: JSON.stringify(Object.fromEntries(formData)),
@@ -203,20 +208,18 @@
             }
         })
         .then(async response => {
-            if (!response.ok) {
+            if (!response.ok) { // If is was unable to do it, do this
                 const messageEl = document.querySelector("#message");
                 const responseText = await response.text();
     
                 messageEl.style.display = "block";
                 messageEl.innerText = responseText;
-            } else {
+            } else { // If it was able to do it, do this
                 console.log(response)
                 const { cookie } = await response.json();
-
-
                 localStorage.cookie = cookie;
                 console.log(cookie);
-            }
+            } // It being doing the sign up
         })
     });
 </script>
