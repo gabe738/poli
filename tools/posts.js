@@ -34,7 +34,7 @@ app.get("/newPost", (req, res) => { // authorId, titleIn, content, city, isComme
     client.close(); // Gotta tie up those loose ends
 });
 
-app.post("/retrieveAllPosts", (req, res) => { // requests: page, city
+app.post("/retrieveAllPosts", (req, res) => { // requests: city
 
     const cityIn = req.body.city;
 
@@ -47,14 +47,16 @@ app.post("/retrieveAllPosts", (req, res) => { // requests: page, city
     
     client.close(); // Closes the loose ends
 
-    if (allPosts.length <= req.body.page * 5 || allPosts.length <= 5) res.json(allPosts.slice(0).slice(-5));
-    else {
-        const returnPosts = [];
-        for (let i = (req.body.page * 5) - 5; i < req.body.page * 5; i++) {
-            returnPosts.push(allPosts[i]);
-        }
-        res.json(returnPosts);
-    }
+    // if (allPosts.length <= req.body.page * 5 || allPosts.length <= 5) res.json(allPosts.slice(0).slice(-5));
+    // else {
+    //     const returnPosts = [];
+    //     for (let i = (req.body.page * 5) - 5; i < req.body.page * 5; i++) {
+    //         returnPosts.push(allPosts[i]);
+    //     }
+    //     res.json(returnPosts);
+    // }
+
+    res.json(allPosts);
 
 });
 
