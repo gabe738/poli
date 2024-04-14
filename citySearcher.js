@@ -51,28 +51,27 @@ app.post("/searchCities", async (req, res) => { // searchTerm
 
 });
 
-app.get("/changeCity", async (req, res) => { // userId, newCity
+// deprecated
+// app.get("/changeCity", async (req, res) => { // userId, newCity
 
-    const userId = req.body.userId;
-    const newCity = req.body.newCity;
+//     const userId = req.body.userId;
+//     const newCity = req.body.newCity;
     
-    const client = new mongo.MongoClient(process.env.uri);
+//     const client = new mongo.MongoClient(process.env.uri);
 
-    client.connect();
+//     client.connect();
 
-    const db = client.db("town");
+//     const db = client.db("town");
 
-    const users = db.collection("users");
+//     const users = db.collection("users");
 
-    posts.updateOne({_id: userId}, { $set: {
-        city: newCity
-    }});
+//     posts.updateOne({_id: userId}, { $set: {
+//         city: newCity
+//     }});
     
-    client.close();
+//     client.close();
 
-});
-
-// temp();
+// });
 
 const PORT = process.env.PORT || 6969;
 
