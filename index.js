@@ -1,11 +1,11 @@
-// All the imports, Express, MongoDB(for storing users), crypto for data safety, path for routing
+// all the imports; express, mongo (for storing users and posts), crypto for data safety, path for routing
 const express = require("express");
 const mongo = require("mongodb");
-const crypto = require("crypto"); // Not crypto currency, but instead protecting user data with encryption
+const crypto = require("crypto"); // cryptography, not crypto currency
 const path = require("path");
 const app = express();
 
-//Set up the connection to MongoDB using our API key in .env
+// set up mongo using our auth token in .env
 const client = new mongo.MongoClient(process.env.uri);
 const db = client.db("town");   
 const users = db.collection("users");
@@ -13,29 +13,29 @@ const posts = db.collection("posts");
 
 const PORT = process.env.PORT || 6969;
 
-// Some rendering code, more boilerplate effectively
+// html + js templating, json request body parsing
 app.set("view engine", "ejs");
 app.use(express.json());
 
-// Gotta prevent that cross-site scripting
+// gotta prevent that cross-site scripting
 const sanitize = data => {
-    return escape(data.replaceAll(/(<|>|\/|"|'|`|\\)/g, "")).trim(); // improve fr
+    return escape(data.replaceAll(/(<|>|\/|"|'|`|\\)/g, "")).trim();
 }
 
-// Following this is what connects the front end to the back end
+// load static files
 app.get("/", (req, res) => {
-    res.sendFile(path.join(__dirname, "./views/main/index.html")); // Fetches main site
+    res.sendFile(path.join(__dirname, "./views/main/index.html")); // load main
 })
 
 app.get("/signup", (req, res) => {
-    res.sendFile(path.join(__dirname, "./views/createAccount/index.html")); // Fetches account creation site
+    res.sendFile(path.join(__dirname, "./views/createAccount/index.html")); // load signup page
 })
 
 app.get("/login", (req, res) => {
-    res.sendFile(path.join(__dirname, "./views/login/login.html")); // Fetches login site
+    res.sendFile(path.join(__dirname, "./views/login/login.html")); // load login page
 })
 
-app.post("/signup", async (req, res) => { // The method to signup users
+app.post("/signup", async (req, res) => { // runs after user clicks signup
     const name = sanitize(req.body.name);
     const username = sanitize(req.body.username);
     const password = sanitize(req.body.password);
@@ -43,45 +43,49 @@ app.post("/signup", async (req, res) => { // The method to signup users
     const email = sanitize(req.body.email);
     const phoneNumber = sanitize(req.body.phone);
 
-    if (!username || !password) {
+    if (!username || !password) { // missing required fields
         res.sendStatus(400); // bad request
         return;
     }
 
-    if (password != confirmed_password) { // Alert users if passwords to not match
-        res.status(400).send("The passwords do not match, please try again.");
+    if (password != confirmed_password) {
+        res.status(400).send("Error: The passwords do not match, please try again.");
         return;
     }
 
 
-    const passHash = crypto.createHash("sha256"); // Creates a hashing method that allows us to save passwords securely
+    const passHash = crypto.createHash("sha256"); // save passwords securely
     passHash.update(password);
 
 
-    // Code to check and see if someone with that username already exists
-    const foundUser = await users.findOne({ username_lower: username.toLowerCase() })
+    // is the username/email taken?
+    const foundUser = await users.findOne({ 
+        $or: [
+            { username_lower: username.toLowerCase() },
+            { email: email.toLowerCase() }
+        ]
+    })
+
     if (foundUser) {
-        res.status(400).send("A user already exists with this username: Consider using a different username; or trying to log in with that username."); // error notification
+        res.status(400).send("Error: Account already exists!"); // error notification
         return;
     }
 
-    const userCookie = crypto.randomUUID(); // Temporary cookie that allows people to not have to re-log in, and to validate posts
+    const userCookie = crypto.randomUUID(); // secure random string
 
     users.insertOne({
         name: name,
         username: username,
         username_lower: username.toLowerCase(),
         password_hash: passHash.digest("hex"),
-        email: email,
+        email: email.toLowerCase(),
         phone: phoneNumber,
         cookie: userCookie
     })
 
-    res.status(200).json({
-        cookie: userCookie // Saves our temporary log in cookie in local storage
-    });
+    res.status(200).json({ cookie: userCookie }); // remember user on the frontent (localhost)
 
-    console.log("user created:", username); // Tells us it works
+    console.log("user created:", username);
 })
 
 app.post("/login", (req, res) => {
