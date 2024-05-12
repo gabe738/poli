@@ -7,6 +7,8 @@ const { parse } = require("csv-parse");
 const fs = require("fs");
 const app = express();
 
+const timeManager = require("./timeManager.js");
+
 // set up mongo using our auth token in .env
 const client = new mongo.MongoClient(process.env.uri);
 const db = client.db("town");   
@@ -24,14 +26,120 @@ app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, "./views/main/index.html")); // load main
 })
 
+app.post("/newPost", async (req, res) => { // authorId, titleIn, content, city, isComment(not used) ---- USED to create new posts after sanatizing
+    const cookie = req.body.cookie;
+    const title = req.body.title;
+    const content = req.body.content;
+    const city = req.body.city;
+    const isComment = req.body.is_comment;
+
+    // const author = users.findOne({ _id: authorId }); // We attach the author to help with moderation
+
+    const author = await users.findOne({ cookie: cookie });
+
+    if (!author) {
+        res.status(400);
+        return;
+    }
+
+    posts.insertOne({ 
+        authorId: author._id,
+        title: title,
+        content: content,
+        time: timeManager.getTime(),  // Still really proud I made this
+        city: city,
+        isComment: isComment
+    });
+
+    console.log(await posts.find().toArray());
+
+    res.send(200);
+});
+
+app.post("/retrieveAllPosts", (req, res) => { // requests: city
+    const city = req.body.city;
+
+    const allPosts = posts.find({ city: city }).toArray(); // Takes the posts and puts it into array
+
+    res.json(allPosts);
+});
+
+app.post("/searchPosts", (req, res) => { // searchTerm, page
+    const city = req.body.city;
+    const search = req.body.searchTerm;
+
+    const allPosts = posts.find({
+        title: search,
+        city: city
+    }).toArray();
+
+    if (allPosts.length <= req.body.page * 5 || allPosts.length <= 5) 
+        res.json(allPosts.slice(0).slice(-5));
+    else {
+        const returnPosts = [];
+
+        for (let i = (req.body.page * 5) - 5; i < req.body.page * 5; i++)
+            returnPosts.push(allPosts[i]);
+
+        res.json(returnPosts);
+    }
+});
+
+app.post("/deletePost", (req, res) => {
+    const ownerCookie = req.body.cookie; // user passes in their cookie. you can only delete a post if you are the one who wrote it
+    const postId = req.body.post_id;
+
+    const author = users.findOne({ cookie: ownerCookie });
+    const post = posts.findOne({ _id: postId });
+
+    if (!author || !post) {
+        res.status(400);
+        return;
+    }
+
+    if (post.authorId != author._id) {
+        res.status(401).send("Error: You aren't the author of this post!");
+        return;
+    }
+
+    posts.deleteOne({ _id: postId });
+
+    res.sendStatus(200);
+});
+
+app.post("/editPost", (req, res) => { // postId, authorIdIn, newContent
+    const postId = req.body.post_id;
+    const authorIdIn = req.body.author_id;
+    const newContent = req.body.new_content;
+
+    const author = users.findOne({ _id: authorIdIn });
+    const post = posts.findOne({ _id: postId });
+
+    if (!author || !post) {
+        res.status(400);
+        return;
+    }
+
+    if (post.authorId != author._id) {
+        res.status(401).send("Error: You aren't the author of this post!");
+        return;
+    }
+
+    posts.updateOne({ _id: postId }, { $set: {
+        content: newContent,
+        edited: true,
+        editTime: timeManager.getTime()
+    }});
+});
+
 app.post("/autocompleteCity", async (req, res) => { // searchTerm
     const searchTerm = req.body.searchTerm;
 
     const possibleCities = [];
 
-    const output2 = fs.readFileSync("./citySearch/output2.csv", { encoding: "utf8" });
+    const cities = fs.readFileSync("./cities.csv", { encoding: "utf8" });
 
-    for (let line of output2.split("\n")) {
+    for (let line of cities.split("\n")) {
         line = line.replace(",", ", ");
 
         if (line.toLowerCase().startsWith(searchTerm.toLowerCase())) 

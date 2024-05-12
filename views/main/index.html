@@ -41,6 +41,11 @@
             const textInput = document.querySelector("#search-box");
             const ghostBox = document.querySelector("#ghost-box");
 
+            if (localStorage.city) {
+                textInput.value = localStorage.city;
+                ghostBox.value = localStorage.city;
+            }
+
             let currentFilters = [];
 
             let filterIndex = 0;
@@ -68,16 +73,71 @@
                 });
             })
 
+            textInput.addEventListener("unfocus", event => {
+                if (localStorage.city)
+                    textInput.value = localStorage.city;
+            })
+
             window.addEventListener("keydown", event => {
-                if (event.key.toLowerCase() == "tab" && document.activeElement.id == "search-box" && currentFilters.length > 0) {
-                    event.preventDefault();
-
-                    filterIndex -= (event.shiftKey * 2) - 1; // (0, 1) -> (-1, 1)
-                    filterIndex = mod(filterIndex, currentFilters.length);
-
-                    ghostBox.value = textInput.value + currentFilters[filterIndex].substring(textInput.value.length, currentFilters[filterIndex].length);
+                if (document.activeElement.id == "search-box" && currentFilters.length > 0 && textInput.value != "") {
+                    if (event.key.toLowerCase() == "tab") {
+                        event.preventDefault();
+    
+                        filterIndex -= (event.shiftKey * 2) - 1; // (0, 1) -> (-1, 1)
+                        filterIndex = mod(filterIndex, currentFilters.length);
+    
+                        ghostBox.value = textInput.value + currentFilters[filterIndex].substring(textInput.value.length, currentFilters[filterIndex].length);
+                    } else if (event.key.toLowerCase() == "enter") {
+                        if (currentFilters[filterIndex]) {
+                            localStorage.city = currentFilters[filterIndex]
+                            textInput.value = currentFilters[filterIndex];
+                            ghostBox.value = currentFilters[filterIndex];
+                            textInput.blur();
+                        }
+                    }
                 }
             })
+        
+            document.querySelector("#posts-form").addEventListener("submit", event => {
+                event.preventDefault(); // prevent yucky default form submission behavior
+                
+                const formData = new FormData(event.target); // get form data
+
+                const formContents = Object.fromEntries(formData);
+
+                formContents.city = localStorage.city;
+                formContents.cookie = localStorage.cookie;
+                
+                formContents.is_comment = false;
+
+                // for (const value in Object.values(formContents))
+                //     if (!value) return; // the user left something blank
+
+                // send data to backend
+                fetch("/newPost", {
+                    method: "POST",
+                    body: JSON.stringify(Object.fromEntries(formData)),
+                    headers: { "Content-Type": "application/json" }
+                })
+                .then(async response => {
+                    // const messageEl = document.querySelector("#message");
+                    console.log(response, await response.json());
+                    if (!response.ok) { // something went wrong
+                        const responseText = await response.text();
+            
+                        // messageEl.style.display = "block";
+                        // messageEl.innerText = responseText;
+                    } else { // success
+                
+                        // messageEl.style.display = "none";
+
+                        // const { cookie } = await response.json();
+                        // localStorage.cookie = cookie;
+
+                        // location.assign("/");
+                    }
+                })
+            });
         })
     </script>
     <style>
@@ -261,6 +321,54 @@
             font-size: 36px;
             font-weight: bolder;
         }
+
+        #posts {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 275px;
+            height: 325px;
+            position: relative;
+            left: 50px;
+            top: 50px;
+            background: #333;
+            color: #fff;
+        }
+
+        #posts-name {
+            width: 275px;
+            text-align: center;
+            font-size: 24px;
+        }
+
+        #posts-form {
+            width: 100%;
+            height: 100%;
+        }
+
+        .post-group {
+            width: 100%;
+            height: 45%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        #post-title {
+
+        }
+
+        #post-content {
+            width: 85%;
+            height: 40%;
+        }
+
+        #post-button {
+            background: #f0f;
+            margin: 5px;
+        }
+
+
     </style>
 </head>
 <body>
@@ -273,7 +381,6 @@
             <input type="text" id="ghost-box" /> <!-- autocomplete -->
             <svg id="search-icon" xmlns="http://www.w3.org/2000/svg" fill="#fff"  viewBox="0 0 512 512"><!--!Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z"/></svg>
         </div>
-
         <div id="signs">
             <button class="button" id="signup" onclick="location.assign('/register')">Register</button>
             <button class="button" id="signin" onclick="location.assign('/login')">Login</button>
@@ -285,6 +392,20 @@
                 <span id="username"></span>
             </div>
         </div>
+    </div>
+    <div id="posts">
+        <span id="posts-name">Create Post</span>
+        <form id="posts-form">
+            <div class="post-group">
+                <label for="title">Title:</label><br>
+                <input type="text" name="title" id="post-title">
+            </div>
+            <div class="post-group">
+                <label for="content">Content:</label><br>
+                <input type="text" name="content" id="post-content" /><br>
+                <button id="post-button" class="button" type="submit">Post</button>
+            </div>
+        </form>
     </div>
     <div id="welcome">
         <h1 id="welcome-message">Welcome, </h1><span id="welcome-username"></span>
